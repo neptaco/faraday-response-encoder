@@ -9,10 +9,16 @@ class Faraday::Response::Scrub
 
     def call(env)
       @app.call(env).on_complete do
-        return if text?(env) and text_only?
-        org_encoding = env[:body].encoding
-        env[:body].force_encoding(@opts[:encoding] || "UTF-8")
-          .scrub!(@opts[:replace] || "").encode(org_encoding).encode(@opts[:encoding] || "UTF-8")
+        p text_only?
+        if text?(env)
+          env[:body] = env[:body].force_encoding(@opts[:encoding] || "UTF-8")
+            .scrub(@opts[:replace] || "")
+        else
+          unless text_only?
+            env[:body] = env[:body].force_encoding(@opts[:encoding] || "UTF-8")
+              .scrub(@opts[:replace] || "")
+          end
+        end
       end
     end
 

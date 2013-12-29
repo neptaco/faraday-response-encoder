@@ -3,7 +3,7 @@ require "spec_helper"
 describe Faraday::Response::Scrub do
   let(:connection) do
     Faraday.new do |builder|
-      builder.response :scrub, encoding: encoding, replace: replace, text_only: false
+      builder.response :scrub, encoding: encoding, replace: replace, text_only: text_only
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
         stub.get('/sample'){ [200, {"Content-Type" => "aplication/json"}, test_srtings] }
       end
@@ -67,7 +67,7 @@ describe Faraday::Response::Scrub do
     context "default" do
       let(:text_only){ nil }
       it do
-        expect(connection.get("/sample").body).to eq replace
+        expect(connection.get("/sample").body).to eq test_srtings
       end
     end
 
