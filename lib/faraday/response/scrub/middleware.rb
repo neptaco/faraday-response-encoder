@@ -19,20 +19,31 @@ class Faraday::Response::Scrub
 
     private
 
+    def encoding(env)
+      @opts[:encoding] || guess(env) || "UTF-8"
+    end
+
     def scrub(env)
-      env[:body].force_encoding(@opts[:encoding] || "UTF-8").scrub(@opts[:replace] || "")      
+      env[:body].force_encoding(encoding(env)).scrub(@opts[:replace] || "")      
     end
 
     def text?(env)
-      env[:response_headers]["content-type"].split(";").first.split("/").first == "text"
+      content_type(env).split(";").first.split("/").first == "text"
     end
 
     def text_only?
       !(@opts[:text_only] == false)
     end
 
-    def guess
-      
+    def guess(env)
+      content_type = content_type(env).split(";")
+      if content_type.size > 1
+        return $1.strip if content_type.last.strip =~ /charset=(.+)/
+      end
+    end
+
+    def content_type(env)
+      env[:response_headers]["content-type"]
     end
   end
 end

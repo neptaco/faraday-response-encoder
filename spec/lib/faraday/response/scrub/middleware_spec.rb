@@ -5,7 +5,7 @@ describe Faraday::Response::Scrub do
     Faraday.new do |builder|
       builder.response :scrub, encoding: encoding, replace: replace, text_only: text_only
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
-        stub.get('/sample'){ [200, {"Content-Type" => "aplication/json"}, test_srtings] }
+        stub.get('/sample'){ [200, {"Content-Type" => "aplication/json; charset=sjis"}, test_srtings] }
       end
     end
   end
@@ -21,7 +21,7 @@ describe Faraday::Response::Scrub do
       let(:encoding){ nil }
       
       it do
-        expect(connection.get("/sample").body.encoding.to_s).to eq "UTF-8"
+        expect(connection.get("/sample").body.encoding.to_s).to eq "Windows-31J"
       end
     end
 

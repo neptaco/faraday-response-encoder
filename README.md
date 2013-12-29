@@ -17,9 +17,9 @@
     connection.get(...).body
 
 ### encoding
-default: UTF-8
+default: charset or UTF-8
 
-encode response body with this value.
+specify encoding of response body
 
 ### replace
 default: ""
