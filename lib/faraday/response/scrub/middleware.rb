@@ -9,20 +9,19 @@ class Faraday::Response::Scrub
 
     def call(env)
       @app.call(env).on_complete do
-        p text_only?
         if text?(env)
-          env[:body] = env[:body].force_encoding(@opts[:encoding] || "UTF-8")
-            .scrub(@opts[:replace] || "")
+          env[:body] = scrub(env)
         else
-          unless text_only?
-            env[:body] = env[:body].force_encoding(@opts[:encoding] || "UTF-8")
-              .scrub(@opts[:replace] || "")
-          end
+          env[:body] = scrub(env) unless text_only?
         end
       end
     end
 
     private
+
+    def scrub(env)
+      env[:body].force_encoding(@opts[:encoding] || "UTF-8").scrub(@opts[:replace] || "")      
+    end
 
     def text?(env)
       env[:response_headers]["content-type"].split(";").first.split("/").first == "text"
@@ -30,6 +29,10 @@ class Faraday::Response::Scrub
 
     def text_only?
       !(@opts[:text_only] == false)
+    end
+
+    def guess
+      
     end
   end
 end
