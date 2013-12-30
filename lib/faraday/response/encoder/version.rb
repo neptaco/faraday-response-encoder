@@ -1,7 +1,7 @@
 module Faraday
   class Response
-    class Scrub
-      VERSION = "0.1.0"
+    class Encoder
+      VERSION = "0.2.0"
     end
   end
 end
