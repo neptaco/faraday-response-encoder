@@ -11,7 +11,7 @@
 
     require "faraday/response/encoder"
     connection = Faraday.new do |builder|
-      builder.use :encoder, { source: "EUC-JP", encode: "UTF-8", replace: "",
+      builder.response :encoder, { source: "EUC-JP", encode: "UTF-8", replace: "",
                               text_only: true, if: ->(env){ ... } }
       builder.adapter :net_http
     end
