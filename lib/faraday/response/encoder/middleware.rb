@@ -23,12 +23,20 @@ class Faraday::Response::Encoder
     private
 
     def encode!
-      body = @env[:body].force_encoding(@opts[:source]).scrub(@opts[:replace] || "")
-      body = @opts[:encoding] ? body.encode(@opts[:encoding]) : body
+      @env[:body].encode(to, from,
+                         :invalid => :replace, :undef => :replace, :replace => replace)
     end
 
-    def source
-      @opts[:source] || guess || "UTF-8"
+    def from
+      @opts[:from] || guess || "UTF-8"
+    end
+
+    def to
+      @opts[:to] || "UTF-8"
+    end
+
+    def replace
+      @opts[:replace] || ""
     end
 
     def text?

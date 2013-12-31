@@ -3,7 +3,7 @@ require "spec_helper"
 describe Faraday::Response::Encoder do
   let(:connection) do
     Faraday.new do |builder|
-      builder.response :encoder, { source: source, encoding: encoding, replace: replace,
+      builder.response :encoder, { from: from, to: to, replace: replace,
         text_only: text_only, if: if_block }
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
         stub.get('/sample'){ [200, {"Content-Type" => content_type }, body] }
@@ -11,8 +11,8 @@ describe Faraday::Response::Encoder do
     end
   end
 
-  let(:source){ "UTF-8" }
-  let(:encoding){ "EUC-JP" }
+  let(:from){ "UTF-8" }
+  let(:to){ "EUC-JP" }
   let(:replace){ "" }
   let(:text_only){ true }
   let(:if_block){ ->(env){ env[:url].to_s =~ /sample/ } }
@@ -28,9 +28,9 @@ describe Faraday::Response::Encoder do
     expect(connection.get("/sample").body).to be_empty
   end
 
-  describe "encoding" do
+  describe "to" do
     context "SJIS" do
-      let(:encoding){ "SJIS" }
+      let(:to){ "SJIS" }
 
       it do
         expect(connection.get("/sample").body.encoding.to_s).to eq "Windows-31J"
@@ -41,15 +41,16 @@ describe Faraday::Response::Encoder do
       end
     end
 
+    # UTF-8 -> UTF-8
     context "empty" do
-      let(:encoding){ nil }
+      let(:to){ nil }
 
       it do
-        expect(connection.get("/sample").body.encoding.to_s).to eq source
+        expect(connection.get("/sample").body.encoding.to_s).to eq from
       end
 
       it do
-        expect(connection.get("/sample").body).to be_empty
+        expect(connection.get("/sample").body).to eq body
       end
     end
   end
@@ -112,7 +113,7 @@ describe Faraday::Response::Encoder do
       end
 
       it do
-        expect(connection.get("/sample").body.encoding.to_s).to eq encoding
+        expect(connection.get("/sample").body.encoding.to_s).to eq to
       end
     end
 
@@ -124,7 +125,7 @@ describe Faraday::Response::Encoder do
       end
 
       it do
-        expect(connection.get("/sample").body.encoding.to_s).to eq source
+        expect(connection.get("/sample").body.encoding.to_s).to eq from
       end
     end
   end

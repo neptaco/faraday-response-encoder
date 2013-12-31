@@ -11,7 +11,7 @@
 
     require "faraday/response/encoder"
     connection = Faraday.new do |builder|
-      builder.response :encoder, { source: "EUC-JP", encode: "UTF-8", replace: "",
+      builder.response :encoder, { from: "EUC-JP", to: "UTF-8", replace: "",
                               text_only: true, if: ->(env){ ... } }
       builder.adapter :net_http
     end
@@ -19,13 +19,13 @@
 
 ### Options
 
-#### source
+#### from
 default: charset value of http headers or UTF-8
 
 specify encoding of response body
 
-#### encoding
-default: none
+#### to
+default: UTF-8
 
 specify value to encode
 
@@ -40,7 +40,7 @@ default: true
 if true and response Content-Type doesn't include "text", skip encoding
 
 #### if
-example: if: ->(env){ env[:url] =~ %r(\Ahttp://github\.com/) }
+example: if: ->(env){ env[:url].to_s =~ %r(\Ahttp://github\.com/) }
 
 ## Contributing
 
