@@ -12,9 +12,9 @@ class Faraday::Response::Encoder
       @app.call(env).on_complete do
         if !@opts[:if] or @opts[:if].call(@env)
           if text?
-            env[:body] = encode!
+            encode!
           else
-            env[:body] = encode! unless text_only?
+            encode! unless text_only?
           end
         end
       end
@@ -23,7 +23,7 @@ class Faraday::Response::Encoder
     private
 
     def encode!
-      @env[:body].encode(to, from,
+      @env[:body].encode!(to, from,
                          :invalid => :replace, :undef => :replace, :replace => replace)
     end
 
@@ -48,6 +48,7 @@ class Faraday::Response::Encoder
     end
 
     def guess
+      return unless content_type
       content_type = content_type.split(";")
       if content_type.size > 1
         return $1.strip if content_type.last.strip =~ /charset=(.+)/
