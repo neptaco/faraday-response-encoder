@@ -1,6 +1,5 @@
-class Faraday::Response::Encoder
-  class Middleware < Faraday::Response::Middleware
-    Faraday.register_middleware :response, encoder: self
+class Faraday::Response
+  class Encoder < Middleware
 
     def initialize(app, opts = {})
       super(app)
@@ -59,4 +58,7 @@ class Faraday::Response::Encoder
       @env[:response_headers]["content-type"]
     end
   end
+
+  register_middleware encoder: Encoder
+
 end
